@@ -4,10 +4,13 @@ import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 
 /**
- * Demonstrates that the {@link Structure#size()} does not return
+ * Demonstrates that the operation {@link Structure#size()} of a
+ * compound structure like {@link CONTAINER} does not return
  * the proper size if the {@link Structure} contains a dynamic
  * size sub-structure.
  *
+ * An example of a real-world usage of a compound structure can be found
+ * here: https://github.com/microsoft/Windows-driver-samples/blob/d3ec258921cfcef7b053b5a2c866330d43dd3f03/usb/usbview/enum.c#L1917
  */
 class BugDemo
 {
