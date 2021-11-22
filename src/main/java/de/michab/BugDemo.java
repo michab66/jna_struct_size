@@ -23,7 +23,7 @@ class BugDemo
         public byte[] buffer;
     }
 
-    @FieldOrder(value = { "dynamic", "terminal" })
+    @FieldOrder(value = { "dynamic" })
     public static class CONTAINER extends Structure
     {
         public CONTAINER( int cfgDescriptorSize ) {
@@ -34,14 +34,7 @@ class BugDemo
             this( 1 );
         }
 
-        @Override
-        public int size()
-        {
-            return super.size() -1;
-        }
-
         public DYNAMIC_STRUCT dynamic;
-        public byte[] terminal = new byte[1];
     }
 
     private static void expect( int expected, int actual ) {
@@ -64,6 +57,8 @@ class BugDemo
             // This fails: 'Expected 14, got 5'
             combined = new CONTAINER( 10 );
             expect( 4+10, combined.size() );
+            combined = new CONTAINER( 11 );
+            expect( 4+11, combined.size() );
         }
     }
 }
