@@ -3,6 +3,12 @@ package de.michab;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 
+/**
+ * Demonstrates that the {@link Structure#size()} does not return
+ * the proper size if the {@link Structure} contains a dynamic
+ * size sub-structure.
+ *
+ */
 class BugDemo
 {
     @FieldOrder(value = { "wSize", "buffer" })
@@ -44,21 +50,18 @@ class BugDemo
 
     public static void main( String[] args )
     {
-        {
-            DYNAMIC_STRUCT cd = new DYNAMIC_STRUCT( 1 );
-            expect( 4+1, cd.size() );
-            cd = new DYNAMIC_STRUCT( 10 );
-            expect( 4+10, cd.size() );
-        }
+        DYNAMIC_STRUCT cd = new DYNAMIC_STRUCT( 1 );
+        expect( 4+1, cd.size() );
+        cd = new DYNAMIC_STRUCT( 10 );
+        expect( 4+10, cd.size() );
 
-        {
-            CONTAINER combined = new CONTAINER( 1 );
-            expect( 4+1, combined.size() );
-            // This fails: 'Expected 14, got 5'
-            combined = new CONTAINER( 10 );
-            expect( 4+10, combined.size() );
-            combined = new CONTAINER( 11 );
-            expect( 4+11, combined.size() );
-        }
+        CONTAINER combined = new CONTAINER( 1 );
+        expect( 4+1, combined.size() );
+        combined = new CONTAINER( 10 );
+        // This fails: 'Expected 14, got 5'. The reason is that
+        // the struct size of CONTAINER was cached in the first
+        // instantiation of CONTAINER and will not change in the
+        // follow up calls.
+        expect( 4+10, combined.size() );
     }
 }
