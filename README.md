@@ -1,0 +1,1 @@
+# jna_struct_size
