@@ -36,14 +36,17 @@ class BugDemo
     public static class CONTAINER extends Structure
     {
         public CONTAINER( int cfgDescriptorSize ) {
-            dynamic = new DYNAMIC_STRUCT( cfgDescriptorSize );
+            dynamic[0] = new DYNAMIC_STRUCT( cfgDescriptorSize );
             setAlignType( ALIGN_NONE );
         }
         public CONTAINER() {
             this( 1 );
         }
 
-        public DYNAMIC_STRUCT dynamic;
+        // The trick is to place the dynamic sub-structure into
+        // an array.  This does not change the structure physically,
+        // but stops JNA from caching its size.
+        public final DYNAMIC_STRUCT[] dynamic = new DYNAMIC_STRUCT[1];
     }
 
     private static void expect( int expected, int actual ) {
@@ -60,11 +63,13 @@ class BugDemo
 
         CONTAINER combined = new CONTAINER( 1 );
         expect( 4+1, combined.size() );
+
         combined = new CONTAINER( 10 );
-        // This fails: 'Expected 14, got 5'. The reason is that
-        // the struct size of CONTAINER was cached in the first
-        // instantiation of CONTAINER and will not change in the
-        // follow up calls.
+        // Works now nicely as expected.
         expect( 4+10, combined.size() );
+
+        combined = new CONTAINER( 313 );
+        // Works now nicely as expected.
+        expect( 4+313, combined.size() );
     }
 }
